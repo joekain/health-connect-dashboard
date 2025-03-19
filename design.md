@@ -45,7 +45,7 @@ The project consists of three main components:
 - **Database**: SQLite with SQLAlchemy
 - **Migration**: Flask-Migrate
 - **API**: RESTful with JSON responses
-- **Authentication**: Token-based authentication (to be implemented)
+- **Authentication**: Token-based authentication (implemented)
 
 ### 3.2 Directory Structure
 ```
@@ -141,11 +141,11 @@ The API will provide endpoints for:
 The immediate next steps for development are:
 
 ### 7.1 Backend Development
-- [ ] Create database models for health data types
-- [ ] Implement basic CRUD API endpoints
-- [ ] Add authentication system
-- [ ] Implement data aggregation and analysis utilities
-- [ ] Add data validation and error handling
+- [x] Create database models for health data types
+- [x] Implement basic CRUD API endpoints
+- [x] Add authentication system
+- [x] Implement data aggregation and analysis utilities
+- [x] Add data validation and error handling
 - [ ] Create comprehensive API tests
 
 ### 7.2 Android App Development
