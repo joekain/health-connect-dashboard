@@ -1,7 +1,8 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, g
 import os
 import secrets
 from datetime import datetime, timedelta
+from functools import wraps
 
 auth_bp = Blueprint('auth', __name__)
 
@@ -22,3 +23,12 @@ def get_token():
         })
     
     return jsonify({'error': 'Invalid credentials'}), 401
+
+def token_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        token = request.headers.get('Authorization')
+        if not token or token != f"Bearer {API_TOKEN}":
+            return jsonify({'error': 'Unauthorized access'}), 401
+        return f(*args, **kwargs)
+    return decorated_function
