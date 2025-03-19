@@ -15,6 +15,8 @@ def sync_data():
     # Process weight data
     if 'weightData' in data:
         for record in data['weightData']:
+            if not validate_weight_data(record):
+                return jsonify({"status": "error", "message": "Invalid weight data"}), 400
             weight_entry = WeightRecord(
                 user_id='your_user_id',  # For MVP, hardcoded is fine
                 timestamp=datetime.fromisoformat(record['timestamp']),
@@ -26,6 +28,8 @@ def sync_data():
     # Process body fat data
     if 'bodyFatData' in data:
         for record in data['bodyFatData']:
+            if not validate_body_fat_data(record):
+                return jsonify({"status": "error", "message": "Invalid body fat data"}), 400
             body_fat_entry = BodyFatRecord(
                 user_id='your_user_id',
                 timestamp=datetime.fromisoformat(record['timestamp']),
@@ -37,6 +41,8 @@ def sync_data():
     # Process calories data
     if 'caloriesData' in data:
         for record in data['caloriesData']:
+            if not validate_calories_data(record):
+                return jsonify({"status": "error", "message": "Invalid calories data"}), 400
             calories_entry = CaloriesRecord(
                 user_id='your_user_id',
                 timestamp=datetime.fromisoformat(record['timestamp']),
@@ -50,6 +56,8 @@ def sync_data():
     # Process nutrition data
     if 'nutritionData' in data:
         for record in data['nutritionData']:
+            if not validate_nutrition_data(record):
+                return jsonify({"status": "error", "message": "Invalid nutrition data"}), 400
             nutrition_entry = NutritionRecord(
                 user_id='your_user_id',
                 timestamp=datetime.fromisoformat(record['timestamp']),
@@ -71,6 +79,61 @@ def sync_data():
     db.session.commit()
     
     return jsonify({"status": "success", "message": "Data synced successfully"})
+
+def validate_weight_data(record):
+    required_fields = ['timestamp', 'weight']
+    for field in required_fields:
+        if field not in record:
+            return False
+    try:
+        datetime.fromisoformat(record['timestamp'])
+        float(record['weight'])
+    except ValueError:
+        return False
+    return True
+
+def validate_body_fat_data(record):
+    required_fields = ['timestamp', 'percentage']
+    for field in required_fields:
+        if field not in record:
+            return False
+    try:
+        datetime.fromisoformat(record['timestamp'])
+        float(record['percentage'])
+    except ValueError:
+        return False
+    return True
+
+def validate_calories_data(record):
+    required_fields = ['timestamp', 'total_calories']
+    for field in required_fields:
+        if field not in record:
+            return False
+    try:
+        datetime.fromisoformat(record['timestamp'])
+        float(record['total_calories'])
+    except ValueError:
+        return False
+    return True
+
+def validate_nutrition_data(record):
+    required_fields = ['timestamp']
+    for field in required_fields:
+        if field not in record:
+            return False
+    try:
+        datetime.fromisoformat(record['timestamp'])
+        if 'calories' in record:
+            float(record['calories'])
+        if 'protein_grams' in record:
+            float(record['protein_grams'])
+        if 'carbs_grams' in record:
+            float(record['carbs_grams'])
+        if 'fat_grams' in record:
+            float(record['fat_grams'])
+    except ValueError:
+        return False
+    return True
 
 @health_data_bp.route('/weight', methods=['GET'])
 def get_weight_data():
